@@ -3,10 +3,13 @@ Group Project Repo for BUS235A
 
 - The link to your data set
 
-https://www.kaggle.com/datasets/kevinmorgado/us-energy-generation-2001-2022
-https://www.kaggle.com/code/bahadirumutiscimen/major-commodity-prices-data-analysis -> for Oil and Natural Gas
-https://www.kaggle.com/datasets/timmofeyy/-metals-price-changes-within-last-30-years -> for Uranium
-https://ourworldindata.org/grapher/coal-prices?country=~US+Central+Appalachian+coal+spot+price+index+%28BP%29 -> for Coal (may need a different set)
+https://www.kaggle.com/datasets/kevinmorgado/us-energy-generation-2001-2022  
+
+https://www.kaggle.com/code/bahadirumutiscimen/major-commodity-prices-data-analysis -> for Oil and Natural Gas  
+
+https://www.kaggle.com/datasets/timmofeyy/-metals-price-changes-within-last-30-years -> for Uranium  
+
+https://ourworldindata.org/grapher/coal-prices?country=~US+Central+Appalachian+coal+spot+price+index+%28BP%29 -> for Coal (may need a different set)  
 
 - The code that you used to load your data into R
 
