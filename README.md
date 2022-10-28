@@ -4,7 +4,9 @@ Group Project Repo for BUS235A
 - The link to your data set
 
 https://www.kaggle.com/datasets/kevinmorgado/us-energy-generation-2001-2022
-
+https://www.kaggle.com/code/bahadirumutiscimen/major-commodity-prices-data-analysis -> for Oil and Natural Gas
+https://www.kaggle.com/datasets/timmofeyy/-metals-price-changes-within-last-30-years -> for Uranium
+https://ourworldindata.org/grapher/coal-prices?country=~US+Central+Appalachian+coal+spot+price+index+%28BP%29 -> for Coal (may need a different set)
 
 - The code that you used to load your data into R
 
@@ -86,5 +88,7 @@ write_csv(clean3, "OilandGas.csv")
 - A discussion of any problems that you encountered during the loading, checking, and cleaning process. Include how you handled any problems and what problems are unresolved.
 
 One of the price data sets does not have the monthly fidelity that the overall energy generation data set has, additionally price may be more dependent on region for coal plants which is not feasible to transport in many cases. There is an unresolved issue of relating the price to the generation. Either the generation will have to be summarized to the year or the yearly price data extrapolated. 
+
+At one point with only litmeted number of rows the original coal price csv was easier to edit by removing the other regions than 
 
 
