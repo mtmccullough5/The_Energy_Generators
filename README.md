@@ -32,12 +32,9 @@ https://ourworldindata.org/grapher/coal-prices?country=~US+Central+Appalachian+c
 
 - The output of running a skim() on your data.
 
-```{r}
-skim(energy)
-```
 ── Data Summary ────────────────────────
                            Values
-Name                       energy
+Name                       comm4 
 Number of rows             496774
 Number of columns          7     
 _______________________          
@@ -47,6 +44,18 @@ Column type frequency:
 ________________________         
 Group variables            None  
 
+── Variable type: character ─────────────────────────────────────────────────────────────────────────────────────────────────────────
+  skim_variable    n_missing complete_rate min max empty n_unique whitespace
+1 STATE                    0             1   2   8     0       52          0
+2 TYPE OF PRODUCER         0             1  29  48     0        6          0
+3 ENERGY SOURCE            0             1   4  30     0       14          0
+
+── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+  skim_variable              n_missing complete_rate       mean          sd      p0  p25    p50     p75      p100 hist 
+1 ...1                               0             1   18143.      13387.         0 7762 15853   24178      65144 ▇▇▂▁▁
+2 YEAR                               0             1    2012.          6.17    2001 2006  2012    2017       2022 ▇▆▆▇▇
+3 MONTH                              0             1       6.43        3.46       1    3     6       9         12 ▇▆▅▅▇
+4 GENERATION (Megawatthours)         0             1 1393384.   10786846.   -997855 1643 23301. 279204. 421796659 ▇▁▁▁▁
 
 
 
