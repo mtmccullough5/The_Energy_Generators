@@ -53,9 +53,7 @@ Group variables            None
 
 - A discussion of the skim output. Do the values seem reasonable or are there some that aren't what you expected or that don't make sense?
 
-
-
-
+The main data set is relatively clean, there are a few data points that probably need to be removed. For instance in the skim there is negative megawatt hour generation value in the P0 col which does not make sense. 
 
 - Any code that you used to check and clean up your data after loading it, such as checking the types of the columns, converting data to the proper type if needed, naming columns, etc.
 
@@ -92,6 +90,6 @@ write_csv(clean3, "OilandGas.csv")
 
 One of the price data sets does not have the monthly fidelity that the overall energy generation data set has, additionally price may be more dependent on region for coal plants which is not feasible to transport in many cases. There is an unresolved issue of relating the price to the generation. Either the generation will have to be summarized to the year or the yearly price data extrapolated. 
 
-At one point with only litmeted number of rows the original coal price csv was easier to edit by removing the other regions than 
+At one point with only limited number of rows the original coal price csv was easier to edit by removing the other regions(non-us) than through R parsing.  
 
 
