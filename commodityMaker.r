@@ -22,5 +22,12 @@ clean3 = comm3 %>%
 print(clean3)
 write_csv(clean3, "OilandGas.csv")
   
-comm4 = read_csv("organised_Gen.csv")
-skim(comm4)
+organised_Gen = read_csv("organised_Gen.csv")
+OilandGas = read_csv("OilandGas.csv")
+coal = read_csv("coal.csv")
+uranium = read_csv("uranium.csv")
+skim(organised_Gen)
+skim(OilandGas)
+skim(coal)
+skim(uranium)
+
