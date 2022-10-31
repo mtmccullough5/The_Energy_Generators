@@ -62,7 +62,7 @@ Group variables            None
 
 - A discussion of the skim output. Do the values seem reasonable or are there some that aren't what you expected or that don't make sense?
 
-The main data set is relatively clean, there are a few data points that probably need to be removed. For instance in the skim there is negative megawatt hour generation value in the P0 col which does not make sense. 
+The main data set is relatively clean, there are a few data points that probably need to be removed. For instance in the skim there is negative megawatt hour generation value in the P0 col which does not make sense. It seems the negative values are related to "Pumped Storage". This will need further investigation.
 
 - Any code that you used to check and clean up your data after loading it, such as checking the types of the columns, converting data to the proper type if needed, naming columns, etc.
 
