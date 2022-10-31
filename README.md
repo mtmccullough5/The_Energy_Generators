@@ -19,7 +19,7 @@ https://ourworldindata.org/grapher/coal-prices?country=~US+Central+Appalachian+c
 - A bullet-point list or table with an entry for each column in your data. For each column, explain in plain English what the data in the column represents (including units, if it is a numeric column).
 
 
-  # : Row count (numeric) per year
+  # : Row count (Numeric) per year
   YEAR : Year (Numeric) energy was generated
   MONTH : Month (Numeric 2001-2022) energy was generated
   STATE : US State (abbreviated) energy was generated
