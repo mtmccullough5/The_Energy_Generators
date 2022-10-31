@@ -97,7 +97,7 @@ write_csv(clean3, "OilandGas.csv")
 
 - A discussion of any problems that you encountered during the loading, checking, and cleaning process. Include how you handled any problems and what problems are unresolved.
 
-One of the price data sets does not have the monthly fidelity that the overall energy generation data set has, additionally price may be more dependent on region for coal plants which is not feasible to transport in many cases. There is an unresolved issue of relating the price to the generation. Either the generation will have to be summarized to the year or the yearly price data extrapolated. 
+One of the price data sets does not have the monthly fidelity that the overall energy generation data set has, additionally price may be more dependent on region for coal plants which is not feasible to transport in many cases. There is an unresolved issue of relating the price to the generation. Either the generation will have to be summarized to the year or the yearly price data extrapolated. Another possible data set for us to consider is https://data.nasdaq.com/data/EIA/COAL-us-coal-prices-by-region but will require come way to connect the location in the main file to the region in that potential dataset.
 
 At one point with only limited number of rows the original coal price csv was easier to edit by removing the other regions(non-us) than through R parsing.  
 
