@@ -1,6 +1,7 @@
 library(skimr)
 library(tidyverse)
 
+energy = read_csv("organised_Gen.csv")
 comm1 = read_csv("uranium_and_metals.csv")
 clean1 = comm1 %>%
   select(Year, Month, Price_uran) %>%
