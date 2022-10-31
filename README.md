@@ -11,6 +11,8 @@ https://www.kaggle.com/datasets/timmofeyy/-metals-price-changes-within-last-30-y
 
 https://ourworldindata.org/grapher/coal-prices?country=~US+Central+Appalachian+coal+spot+price+index+%28BP%29 -> for Coal (may need a different set)  
 
+https://github.com/mtmccullough5/The_Energy_Generators/edit/main/README.md -> Project Repository
+ 
 - The code that you used to load your data into R
 
   energy <- read_csv("organised_Gen.csv")
