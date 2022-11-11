@@ -39,18 +39,68 @@ The United States uses various energy sources to create electricity. Over time, 
 # Data Collection and Arrangement
 
 ```{r}
-energy = read_csv("organised_Gen.csv")
-states = read_csv("states.csv")
-og = read_csv("OilandGas.csv")
-uranium = read_csv("uranium.csv")
-coal = read_csv("coal.csv")
+# Read in Data
+energy = read_csv("organised_Gen.csv") # Data in organised_gen is by month from 2001 to 2022
+states = read_csv("states.csv") # 51 states inclusive of DC with coal region
+og = read_csv("OilandGas.csv") # Daily oil and natural gas prices 01/2000 to 02/2022 
+uranium = read_csv("uranium.csv") # Monthly Uranium prices from 01/2000 to 11/2021
+coal = read_csv("coal.csv") # Weekly coal prices from 05/2008 to 10/2021
 
-print(energy)
-print(states)
-print(og)
-print(uranium)
-print(coal)
+```
+```{r}
+# generate a whole data set
+dateStart = make_date(2008,5,1)
+dateEnd = make_date(2021,10,30)
 
+print(dateStart)
+print(dateEnd)
+
+# Energy
+energyWhole = energy %>%
+  mutate(date_col = make_date(year=YEAR,month=MONTH)) %>%
+  select(date_col, everything()) %>%
+  filter(date_col >= dateStart & date_col <= dateEnd) %>%
+  arrange(date_col)
+print(energyWhole)
+# OG
+ogWhole = og %>%
+  filter(Date >= dateStart & Date <= dateEnd) %>%
+  mutate(MONTH = month(Date), YEAR = year(Date)) %>%
+  group_by(MONTH, YEAR) %>%
+  summarize(
+    Price_natural_gas_m = mean(Price_natural_gas, na.rm = T), 
+    Price_oil_m = mean(Price_oil, na.rm = T)) %>%
+  mutate(date_col = make_date(year=YEAR,month=MONTH)) %>%
+  arrange(date_col)
+print(ogWhole)
+# Uranium
+uraniumWhole = uranium %>%
+  mutate(date_col = make_date(year = Year, month = match(Month,month.abb))) %>%
+  filter(date_col >= dateStart & date_col <= dateEnd) %>%
+  arrange(date_col)
+print(uraniumWhole)
+# Coal
+coalWhole = coal %>%
+  filter(Week_Ended >= dateStart & Week_Ended <= dateEnd) %>%
+  mutate(MONTH = month(Week_Ended), YEAR = year(Week_Ended)) %>%
+  group_by(MONTH, YEAR) %>%
+  summarize(
+    CAP = mean(CAP, na.rm = T), 
+    NAP = mean(NAP, na.rm = T), 
+    ILB = mean(ILB, na.rm = T), 
+    PRB = mean(PRB, na.rm = T), 
+    UIB = mean(UIB, na.rm = T)) %>%
+  mutate(date_col = make_date(year=YEAR,month=MONTH)) %>%
+  arrange(date_col) %>%
+  mutate(
+    ALL = (CAP + NAP + ILB + PRB + UIB)/5,
+    CAP_NAP = (CAP + NAP)/2,
+    ILB_CAP = (ILB + CAP)/2,
+    ILB_PRB = (ILB + PRB)/2,
+    UIB_PRB = (UIB + PRB)/2,
+    UIB_ILB = (UIB + ILB)/2
+  )
+print(coalWhole)
 ```
 
 
