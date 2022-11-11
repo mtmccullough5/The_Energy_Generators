@@ -1,6 +1,6 @@
 ---
 title: "Energy Generation Analysis Report"
-author: "Matthew McCullough"
+author: "The Energy Generators"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
