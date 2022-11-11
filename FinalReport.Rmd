@@ -1,0 +1,108 @@
+---
+title: "Energy Generation Analysis Report"
+author: "Matthew McCullough"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(lubridate)
+
+```
+
+# Group Members
+
+- Richard Abegg
+- Matthew McCullough
+- Shivani Sharma
+- Kevin Tam
+
+# Abstract
+
+The United States uses various energy sources to create electricity. Over time, the energy sources change, resulting in some becoming used more than others. Our data set looks at the monthly United States energy generation per state, type of producer, and type of source from 2001 to 2022. The set is comprised of data collected by the EIA (US Energy Information Administration) which shows the types of energies produced by each state. The following columns of information are collected: year, month, state, type of producer, energy source, and generation. The three major categories of energy sources found from the data set are fossil fuels, nuclear and renewable energy. These energy sources combined with the producer types create energy for the entire country. From this data, we hope the answer the following questions below.
+
+
+# Introduction
+
+### Questions within the data
+
+- Does the cost of fuel influence the energy production rates?
+- How has the reduction in renewables cost affected generation numbers?
+- Which energy source produces the most energy?
+- What is the average yearly production of each energy source by state?
+- Which state produced the most of each energy type in the last 10 years?
+
+
+
+# Data Collection and Arrangement
+
+```{r}
+energy = read_csv("organised_Gen.csv")
+states = read_csv("states.csv")
+og = read_csv("OilandGas.csv")
+uranium = read_csv("uranium.csv")
+coal = read_csv("coal.csv")
+
+print(energy)
+print(states)
+print(og)
+print(uranium)
+print(coal)
+
+```
+
+
+The main data set is relatively clean, there are a few data points that probably need to be removed. For instance in the skim there is negative megawatt hour generation value in the P0 col which does not make sense. It seems the negative values are related to "Pumped Storage". This will need further investigation.
+
+The start of formatting the price data, sourced from various other data sources then the original energy data set. Pulling in the various csv files in their own formats and making adjustments to a common format with just the data of interest. 
+
+One of the price data sets does not have the monthly fidelity that the overall energy generation data set has, additionally price may be more dependent on region for coal plants which is not feasible to transport in many cases. There is an unresolved issue of relating the price to the generation. Either the generation will have to be summarized to the year or the yearly price data extrapolated. Another possible data set for us to consider is https://data.nasdaq.com/data/EIA/COAL-us-coal-prices-by-region but will require come way to connect the location in the main file to the region in that potential dataset.
+
+At one point with only limited number of rows the original coal price csv was easier to edit by removing the other regions(non-us) than through R parsing.  
+
+
+# Discussion
+
+## Does the cost of fuel influence the energy production rates?
+
+
+## Does the cost of fuel influence the energy production rates?
+
+## How has the reduction in renewables cost affected generation numbers?
+
+## Which energy source produces the most energy?
+
+## What is the average yearly production of each energy source by state?
+
+## Which state produced the most of each energy type in the last 10 years?
+
+
+# Conclusions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Appendix 1 - Data Source
+
+https://www.kaggle.com/datasets/kevinmorgado/us-energy-generation-2001-2022  
+
+https://www.kaggle.com/code/bahadirumutiscimen/major-commodity-prices-data-analysis -> for Oil and Natural Gas  
+
+https://www.kaggle.com/datasets/timmofeyy/-metals-price-changes-within-last-30-years -> for Uranium  
+
+https://ourworldindata.org/grapher/coal-prices?country=~US+Central+Appalachian+coal+spot+price+index+%28BP%29 -> for Coal (may need a different set)  
+
+https://github.com/mtmccullough5/The_Energy_Generators/edit/main/README.md -> Project Repository
