@@ -62,6 +62,9 @@ energyWhole = energy %>%
   filter(date_col >= dateStart & date_col <= dateEnd) %>%
   arrange(date_col)
 print(energyWhole)
+# States
+print(states)
+
 # OG
 ogWhole = og %>%
   filter(Date >= dateStart & Date <= dateEnd) %>%
@@ -71,13 +74,16 @@ ogWhole = og %>%
     Price_natural_gas_m = mean(Price_natural_gas, na.rm = T), 
     Price_oil_m = mean(Price_oil, na.rm = T)) %>%
   mutate(date_col = make_date(year=YEAR,month=MONTH)) %>%
-  arrange(date_col)
+  ungroup() %>%
+  arrange(date_col) %>%
+  select(date_col, Price_natural_gas_m, Price_oil_m)
 print(ogWhole)
 # Uranium
 uraniumWhole = uranium %>%
   mutate(date_col = make_date(year = Year, month = match(Month,month.abb))) %>%
   filter(date_col >= dateStart & date_col <= dateEnd) %>%
-  arrange(date_col)
+  arrange(date_col) %>%
+  select(date_col, Price_uran)
 print(uraniumWhole)
 # Coal
 coalWhole = coal %>%
@@ -91,6 +97,7 @@ coalWhole = coal %>%
     PRB = mean(PRB, na.rm = T), 
     UIB = mean(UIB, na.rm = T)) %>%
   mutate(date_col = make_date(year=YEAR,month=MONTH)) %>%
+  ungroup() %>%
   arrange(date_col) %>%
   mutate(
     ALL = (CAP + NAP + ILB + PRB + UIB)/5,
@@ -99,10 +106,50 @@ coalWhole = coal %>%
     ILB_PRB = (ILB + PRB)/2,
     UIB_PRB = (UIB + PRB)/2,
     UIB_ILB = (UIB + ILB)/2
-  )
+  ) %>%
+  select(date_col, CAP, NAP, ILB, PRB, UIB, ALL, CAP_NAP, ILB_CAP, ILB_PRB, UIB_PRB, UIB_ILB)
 print(coalWhole)
 ```
 
+```{r}
+# Join tables into super table
+# Prep Coal
+coalWholeLong = coalWhole %>%
+  pivot_longer(c(CAP, NAP, ILB, PRB, UIB, ALL, CAP_NAP, ILB_CAP, ILB_PRB, UIB_PRB, UIB_ILB))
+
+print(coalWholeLong)
+
+# Build Table
+allTableWhole = energyWhole %>%
+  left_join(states, by = c("STATE"="Code")) %>%
+  select(date_col, STATE, `TYPE OF PRODUCER`,`ENERGY SOURCE`, `GENERATION (Megawatthours)`,Coal_Region) %>%
+  pivot_wider(names_from = `ENERGY SOURCE`, values_from = `GENERATION (Megawatthours)`) %>%
+  group_by(STATE,date_col,Coal_Region) %>%
+  summarize(
+    Coal_Gen_Total = sum(Coal, na.rm = T),
+    Petroleum_Gen_Total = sum(Petroleum, na.rm = T),
+    Natural_Gas_Gen_Total = sum(`Natural Gas`, na.rm = T),
+    Hydro_Gen_Total = sum(`Hydroelectric Conventional`, na.rm = T),
+    Wind_Gen_Total = sum(Wind, na.rm = T),
+    Biomass_Gen_Total = sum(`Other Biomass`, na.rm = T),
+    Other_Gen_Total = sum(Other, na.rm = T),
+    Other_Gas_Gen_Total = sum(`Other Gases`, na.rm = T),
+    Nuclear_Gen_Total = sum(Nuclear, na.rm = T),
+    Wood_Gen_Total = sum(`Wood and Wood Derived Fuels`, na.rm = T),
+    Storage_Gen_Total = sum(`Pumped Storage`, na.rm = T),
+    Solar_Gen_Total = sum(`Solar Thermal and Photovoltaic`, na.rm = T),
+    Geothermal_Gen_Total = sum(Geothermal, na.rm = T)
+    ) %>%
+  left_join(ogWhole, by = c( "date_col"="date_col")) %>%
+  left_join(uraniumWhole, by = c( "date_col"="date_col")) %>%
+  left_join(coalWholeLong, by = c( "date_col"="date_col", "Coal_Region"="name")) %>%
+  rename(Price_coal = value) %>%
+  select(-Coal_Region) %>%
+  ungroup() %>%
+  arrange(date_col)
+
+print(allTableWhole)
+```
 
 The main data set is relatively clean, there are a few data points that probably need to be removed. For instance in the skim there is negative megawatt hour generation value in the P0 col which does not make sense. It seems the negative values are related to "Pumped Storage". This will need further investigation.
 
