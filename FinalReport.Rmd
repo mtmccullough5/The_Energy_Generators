@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(lubridate)
 library(dplyr)
-library(leaflet)
+
 
 ```
 
@@ -182,12 +182,13 @@ avgProdbySourcebyState
 
 ## show data for each Energy Source
 avgProdbySourcebyState %>%
-  filter(EnergySource=='Coal')
-ggplot(data = avgProdbySourcebyState) +
-  geom_point(aes(y = avgGigHours, x= YEAR, group = STATE, color = STATE,linetype = STATE), stat = "identity") +
-  labs(title = "Coal Energy Production by State",
-       y = "Average Energy Generation (Gigawatthours)",
-       x = "Year")
+  filter(EnergySource=='Coal', avgGigHours >0)
+##ggplot(data = avgProdbySourcebyState) +
+##  geom_point(aes(y = avgGigHours, x= YEAR, group = STATE, color = STATE,linetype = STATE), stat = "identity") +
+##  labs(title = "Coal Energy Production by State",
+##       y = "Average Energy Generation (Gigawatthours)",
+##       x = "Year")
+
 ```
 
 ## Which state produced the most of each energy type in the last 10 years?
