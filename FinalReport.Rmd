@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(lubridate)
 library(dplyr)
+library(usmap)
 
 
 ```
@@ -153,17 +154,19 @@ totalBySource <- energyWholeClean %>% group_by(EnergySource,STATE, YEAR) %>%
 ##totalBySource
 ## create bar graph for total production
 ggplot(data = totalBySourceGig) +
-  geom_bar(aes(y = reorder(EnergySource, totalProductionGig,), x = totalProductionGig), stat = "identity") +
+  geom_bar(aes(y = reorder(EnergySource, totalProductionGig), x = totalProductionGig), stat = "identity") +
   labs(title = "Total Energy Production by Energy Source",
        x = "Energy Generation (Millions of Gigawatthours)",
        y = "Energy Source")
 ```
 
 Looking at the data simply by total doesn't tell the whole story though. When we look at using a line graph, we find drastic changes in a few of the energy sources.  Clearly there is a shift to move away from using coal as an energy source with the total production almost cuts in half since 2008. The exact opposite can be said for Natural Gas with energy production nearly doubling.  Clearly the country is making efforts to protect the environment by moving from Coal to Natural Gas for its energy.  It is also worth noting that Nuclear energy production has remained level over the entire time period. There are reasons preventing the US from moving to more nuclear production.  The only other real item on note is the gradual increase in production of Wind energy.  Yet more evidence the US is looking to increase cleaner energy.
+##something happened and this chart looks goofy now - figure out why
+
 ```{r}
 ##show data by year 
 ggplot(data = totalBySource) +
-  geom_line(aes(y = totalProduction,x= YEAR, group = EnergySource, color = EnergySource,linetype = EnergySource), stat = "identity") +
+  geom_line(aes(y = totalProduction,x = YEAR, group = EnergySource, color = EnergySource, linetype = EnergySource), stat = "identity") +
   labs(title = "Total Energy Production by Energy Source",
        y = "Energy Generation (Gigawatthours)",
        x = "Year")
@@ -172,22 +175,39 @@ ggplot(data = totalBySource) +
 
 ## What is the average yearly production of each energy source by state?
 
-STILL WORKING on this section
+##STILL WORKING on this section
 ```{r}
-## create tibble for use to answer this question
+
+library(rlang)
+
+## create tibble for to get data for 5 key energy sources
 avgProdbySourcebyState <- energyWholeClean %>%
+##  filter(YEAR=='2008', !EnergySource=='Total', !STATE=='US-TOTAL') %>%  
+  filter(EnergySource=='Coal' | EnergySource=='Natural Gas'| EnergySource=='Nuclear'| EnergySource=='Hydroelectric Conventional'| EnergySource=='Wind', !STATE=='US-TOTAL') %>%
   group_by(EnergySource,STATE, YEAR) %>%
-  summarise(avgGigHours = mean(GenerationGig))
+  summarise(avgGigHours = mean(GenerationGig))%>%
+  filter(avgGigHours >0)
 avgProdbySourcebyState
 
-## show data for each Energy Source
-avgProdbySourcebyState %>%
-  filter(EnergySource=='Coal', avgGigHours >0)
-##ggplot(data = avgProdbySourcebyState) +
-##  geom_point(aes(y = avgGigHours, x= YEAR, group = STATE, color = STATE,linetype = STATE), stat = "identity") +
-##  labs(title = "Coal Energy Production by State",
-##       y = "Average Energy Generation (Gigawatthours)",
-##       x = "Year")
+##get list of unique states
+variables <- avgProdbySourcebyState %>%
+ group_by(STATE) %>%
+  distinct(STATE)
+##for each var (STATE) create a line chart showing avg Production by year
+for (var in variables) {
+print(var)
+##get data for the STATE being looped on
+stateAvgProd <-  avgProdbySourcebyState %>%
+  filter(STATE=='!!sym(var)')
+##Create a chart for state showing average production by energy source
+plot <- ggplot(data = stateAvgProd, aes(x = YEAR, y = avgGigHours, group = EnergySource, color = EnergySource), stat = "identity") +
+    geom_line() +
+    geom_point()
+print(plot)
+}
+
+
+
 
 ```
 
