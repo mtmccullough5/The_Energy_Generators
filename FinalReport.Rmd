@@ -259,14 +259,23 @@ print(plot)
 ```
 
 ## Which state produced the most of each energy type in the last 10 years?
+## Looking at 2011-2021, from end date above
+## NOT DONE
+library(rlang)
+
+MostEnergyProdbySourcebyState <- energyWholeClean %>%
+  filter(YEAR>='2011', YEAR<= '2021') %>% 
+  filter(EnergySource=='Coal' | EnergySource=='Natural Gas'| EnergySource=='Nuclear'| EnergySource=='Hydroelectric Conventional'| EnergySource=='Wind', !STATE=='US-TOTAL') %>%
+  group_by(EnergySource,STATE, YEAR) %>%
+  summarize(TotalProduction = sum(GenerationGig))%>%
+  filter(TotalProduction >0) %>%
+  arrange(TotalProduction)
+MostEnergyProdbySourcebyState
+
+
 
 
 # Conclusions
-
-
-
-
-
 
 
 
