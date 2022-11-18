@@ -1,0 +1,31 @@
+---
+title: "Visualizations"
+author: "The Energy Generators"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+
+```
+
+  - A visualization of each column in your data set. Choose an appropriate visualization based on the type of data in each column. If your data set has more than 10 columns, you can limit yourself to visualizing the 10 columns that you are most interested in.
+
+```{r }
+
+
+
+```
+- At least 5 visualizations that show the relationships between pairs of columns in your data set. You can choose whichever 5 (or more) pairs of columns you are interested in.
+
+```{r }
+
+
+
+```
+
+- A brief discussion (one or two sentences) of each visualization. In your discussion, interpret the visualization and highlight any interesting patterns or relationships that the visualization reveals.
+
+
+
+
