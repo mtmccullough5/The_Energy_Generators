@@ -122,7 +122,7 @@ ggplot(data = totalBySource) +
 
 
 3. YEAR vs GENERATION_Megawatthours
-
+  Graphing YEAR vs GENERATION shows that 2018 procduced the greatest total amount of energy for all states.
 
 4. STATE VS GENERATION_Megawatthours
 
