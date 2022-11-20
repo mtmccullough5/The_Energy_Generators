@@ -1,4 +1,4 @@
----
+----
 title: "Visualizations"
 author: "The Energy Generators"
 date: "`r Sys.Date()`"
@@ -27,26 +27,55 @@ ggplot(visualizationData, aes(y=reorder(TYPE_OF_PRODUCER, TYPE_OF_PRODUCER, leng
 ggplot(visualizationData, aes(y=reorder(ENERGY_SOURCE, ENERGY_SOURCE, length))) +
   geom_bar() 
 ggplot(visualizationData, aes(x=GENERATION_Megawatthours)) +
-  geom_histogram(bins = 2.5 )
+  geom_histogram(bins = 2.2 )
 ```
 ## At least 5 visualizations that show the relationships between pairs of columns in your data set. You can choose whichever 5 (or more) pairs of columns you are interested in.
 
 
 1. STATE vs ENERGY_SOURCE 
 ```{r }
+stateVsSource <- visualizationData
+totalByState <- stateVsSource %>% group_by(ENERGY_SOURCE) %>%
+  summarize(STATE) %>%
+  filter(!STATE=="US-TOTAL") ## remove Total category
 
+ggplot(data = totalByState) +
+  geom_bar(aes(y = reorder(STATE, ENERGY_SOURCE, length))) +
+  labs(title = "Total GENERATION Source by STATE",
+       x = "ENERGY SOURCE",
+       y = "STATE")
 
 
 ```
 2. STATE vs  TYPE_OF_PRODUCER
 ```{r }
+stateVsProducer <- visualizationData
+totalByState <- stateVsProducer %>% group_by(TYPE_OF_PRODUCER) %>%
+  summarize(STATE) %>%
+  filter(!STATE=="US-TOTAL") ## remove Total category
 
+ggplot(data = totalByState) +
+  geom_bar(aes(y = reorder(STATE, TYPE_OF_PRODUCER, length))) +
+  labs(title = "TYPE_OF_PRODUCER by STATE",
+       x = "PRODUCER",
+       y = "STATE")
 
 
 ```
 3. YEAR vs GENERATION_Megawatthours
 ```{r }
-
+stateVsGen <- visualizationData
+##stateVsGen
+##Sum up enegry Generation by source
+totalByYear <- stateVsGen %>% group_by(YEAR) %>%
+  summarize(totalProduction = sum(GENERATION_Megawatthours))
+##totalBySource
+## create bar graph for total production
+ggplot(data = totalByYear) +
+  geom_bar(aes(y = reorder(YEAR, totalProduction), x = totalProduction), stat = "identity") +
+  labs(title = "Total GENERATION_Megawatthours by Year",
+       x = "GENERATION_Megawatthours",
+       y = "YEAR")
 
 
 ```
