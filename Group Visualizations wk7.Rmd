@@ -12,33 +12,92 @@ library(tidyverse)
 visualizationData <- read_csv("organised_Gen_nospace.csv")
 ```
 
-  - A visualization of each column in your data set. Choose an appropriate visualization based on the type of data in each column. If your data set has more than 10 columns, you can limit yourself to visualizing the 10 columns that you are most interested in.
+## A visualization of each column in your data set. Choose an appropriate visualization based on the type of data in each column. If your data set has more than 10 columns, you can limit yourself to visualizing the 10 columns that you are most interested in.
 
 ```{r }
-view(visualizationData)
-ggplot(visualizationData, aes(x=YEAR)) +
+##view(visualizationData)
+ggplot(visualizationData, aes(y= reorder(YEAR, YEAR, length))) +
   geom_bar()
-ggplot(visualizationData, aes(x=MONTH)) +
+ggplot(visualizationData, aes(y=reorder(MONTH, MONTH, length))) +
   geom_bar()
-ggplot(visualizationData, aes(y=STATE)) +
+ggplot(visualizationData, aes(y=reorder(STATE, STATE, length)))  +
   geom_bar() 
-ggplot(visualizationData, aes(y=TYPE_OF_PRODUCER)) +
-  geom_bar() 
-ggplot(visualizationData, aes(y=ENERGY_SOURCE)) +
+ggplot(visualizationData, aes(y=reorder(TYPE_OF_PRODUCER, TYPE_OF_PRODUCER, length))) +
+  geom_bar()
+ggplot(visualizationData, aes(y=reorder(ENERGY_SOURCE, ENERGY_SOURCE, length))) +
   geom_bar() 
 ggplot(visualizationData, aes(x=GENERATION_Megawatthours)) +
-  geom_histogram()
+  geom_histogram(bins = 2.5 )
 ```
-- At least 5 visualizations that show the relationships between pairs of columns in your data set. You can choose whichever 5 (or more) pairs of columns you are interested in.
+## At least 5 visualizations that show the relationships between pairs of columns in your data set. You can choose whichever 5 (or more) pairs of columns you are interested in.
 
+
+1. STATE vs ENERGY_SOURCE 
 ```{r }
 
 
 
 ```
+2. STATE vs  TYPE_OF_PRODUCER
+```{r }
 
+
+
+```
+3. YEAR vs GENERATION_Megawatthours
+```{r }
+
+
+
+```
+4. STATE VS GENERATION_Megawatthours
+```{r }
+stateVsGen <- visualizationData
+##stateVsGen
+##Sum up enegry Generation by source
+totalByState <- stateVsGen %>% group_by(STATE) %>%
+  summarize(totalProduction = sum(GENERATION_Megawatthours)) %>%
+  filter(!STATE=="US-TOTAL") ## remove Total category
+##totalBySource
+## create bar graph for total production
+ggplot(data = totalByState) +
+  geom_bar(aes(y = reorder(STATE, totalProduction), x = totalProduction), stat = "identity") +
+  labs(title = "Total GENERATION_Megawatthours by STATE",
+       x = "GENERATION_Megawatthours",
+       y = "STATE")
+
+```
+5. ENERGY_SOURCE vs GENERATION_Megawatthours
+```{r }
+sourceVsGen <- visualizationData
+##stateVsGen
+##Sum up enegry Generation by source
+totalBySource <- sourceVsGen %>% group_by(ENERGY_SOURCE) %>%
+  summarize(totalProduction = sum(GENERATION_Megawatthours)) %>%
+  filter(!ENERGY_SOURCE=="Total") ## remove Total category
+##totalBySource
+## create bar graph for total production
+ggplot(data = totalBySource) +
+  geom_bar(aes(y = reorder(ENERGY_SOURCE, totalProduction), x = totalProduction), stat = "identity") +
+  labs(title = "Total GENERATION_Megawatthours by ENERGY_SOURCE",
+       x = "GENERATION_Megawatthours",
+       y = "ENERGY_SOURCE")
+    
+```
 - A brief discussion (one or two sentences) of each visualization. In your discussion, interpret the visualization and highlight any interesting patterns or relationships that the visualization reveals.
 
+1. STATE vs ENERGY_SOURCE 
 
 
+2. STATE vs  TYPE_OF_PRODUCER
 
+
+3. YEAR vs GENERATION_Megawatthours
+
+
+4. STATE VS GENERATION_Megawatthours
+
+  Graphing STATE vs GENERATION shows Texas is by far the largest energy producer in the country. FL, PA, CA and IL also produce much more energy than other states. Since there are so many states, we will likely need to focus our anaylsis on key states.
+5. ENERGY_SOURCE vs GENERATION_Megawatthours
+
+  Graphing the ENERGY_SOURCE by GENERATION shows that there are 5 main energy sources in the US. This will inform which energy sources we want to evelaute in the final report. Unless something interesting is occuring in those 8 categories - it probably isn't worth including in our analysis.
