@@ -41,7 +41,7 @@ totalByState <- stateVsSource %>% group_by(ENERGY_SOURCE) %>%
 
 ggplot(data = totalByState) +
   geom_bar(aes(y = reorder(STATE, ENERGY_SOURCE, length))) +
-  labs(title = "Total GENERATION Source by STATE",
+  labs(title = "Total ENERGY Source by STATE",
        x = "ENERGY SOURCE",
        y = "STATE")
 
