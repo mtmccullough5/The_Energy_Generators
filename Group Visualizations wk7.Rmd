@@ -116,17 +116,17 @@ ggplot(data = totalBySource) +
 - A brief discussion (one or two sentences) of each visualization. In your discussion, interpret the visualization and highlight any interesting patterns or relationships that the visualization reveals.
 
 1. STATE vs ENERGY_SOURCE 
-Graphing State vs Energy Source shows that California 
+Graphing State vs Energy Source shows the type of energy source by each State. These include Coal, Geothermal, Hydroelectric Conventional, etc. 
 
 2. STATE vs  TYPE_OF_PRODUCER
-
+Graphing State vs Type_OF_Producer shows the type of prdoucer by each State. These include Combined Heat and Power and/or Commercial power, 
+Electric Power, Industrial Power, etc. 
 
 3. YEAR vs GENERATION_Megawatthours
-  Graphing YEAR vs GENERATION shows that 2018 procduced the greatest total amount of energy for all states.
+Graphing YEAR vs GENERATION shows that 2018 procduced the greatest total amount of energy for all states.
 
 4. STATE VS GENERATION_Megawatthours
+Graphing STATE vs GENERATION shows Texas is by far the largest energy producer in the country. FL, PA, CA and IL also produce much more energy than other states. Since there are so many states, we will likely need to focus our anaylsis on key states.
 
-  Graphing STATE vs GENERATION shows Texas is by far the largest energy producer in the country. FL, PA, CA and IL also produce much more energy than other states. Since there are so many states, we will likely need to focus our anaylsis on key states.
 5. ENERGY_SOURCE vs GENERATION_Megawatthours
-
-  Graphing the ENERGY_SOURCE by GENERATION shows that there are 5 main energy sources in the US. This will inform which energy sources we want to evelaute in the final report. Unless something interesting is occuring in those 8 categories - it probably isn't worth including in our analysis.
+Graphing the ENERGY_SOURCE by GENERATION shows that there are 5 main energy sources in the US. This will inform which energy sources we want to evelaute in the final report. Unless something interesting is occuring in those 8 categories - it probably isn't worth including in our analysis.
