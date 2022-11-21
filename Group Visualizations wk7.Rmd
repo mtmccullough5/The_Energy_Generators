@@ -1,3 +1,8 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
 ----
 title: "Visualizations"
 author: "The Energy Generators"
@@ -11,6 +16,8 @@ library(tidyverse)
 
 visualizationData <- read_csv("organised_Gen_nospace.csv")
 ```
+
+
 
 ## A visualization of each column in your data set. Choose an appropriate visualization based on the type of data in each column. If your data set has more than 10 columns, you can limit yourself to visualizing the 10 columns that you are most interested in.
 
@@ -29,6 +36,9 @@ ggplot(visualizationData, aes(y=reorder(ENERGY_SOURCE, ENERGY_SOURCE, length))) 
 ggplot(visualizationData, aes(x=GENERATION_Megawatthours)) +
   geom_histogram(bins = 2.2 )
 ```
+
+
+
 ## At least 5 visualizations that show the relationships between pairs of columns in your data set. You can choose whichever 5 (or more) pairs of columns you are interested in.
 
 
@@ -116,7 +126,10 @@ ggplot(data = totalBySource) +
        y = "ENERGY_SOURCE")
     
 ```
-- A brief discussion (one or two sentences) of each visualization. In your discussion, interpret the visualization and highlight any interesting patterns or relationships that the visualization reveals.
+
+
+
+## A brief discussion (one or two sentences) of each visualization. In your discussion, interpret the visualization and highlight any interesting patterns or relationships that the visualization reveals.
 
 1. TYPE_OF_PRODUCER vs GENERATION_Megawatthours
   Graphing the TYPE_OF_PRODUCER by GENERATION shows that electric produces the most for the country, Total Electric Power Industry being the leader. 
