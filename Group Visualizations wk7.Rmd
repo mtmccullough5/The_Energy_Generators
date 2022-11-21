@@ -32,44 +32,48 @@ ggplot(visualizationData, aes(x=GENERATION_Megawatthours)) +
 ## At least 5 visualizations that show the relationships between pairs of columns in your data set. You can choose whichever 5 (or more) pairs of columns you are interested in.
 
 
-1. STATE vs ENERGY_SOURCE 
+1. TYPE_OF_PRODUCER vs GENERATION_Megawatthours
 ```{r }
-stateVsSource <- visualizationData
-totalByState <- stateVsSource %>% group_by(ENERGY_SOURCE) %>%
-  summarize(STATE) %>%
-  filter(!STATE=="US-TOTAL") ## remove Total category
-  
-ggplot(data = totalByState) +
-  geom_bar(aes(y = reorder(STATE, ENERGY_SOURCE, length),
-  fill = ENERGY_SOURCE)) +
-  labs(title = "Total ENERGY Source by STATE",
-       x = "ENERGY SOURCE",
-       y = "STATE")
-
-```
-2. STATE vs  TYPE_OF_PRODUCER
-```{r }
-stateVsProducer <- visualizationData
-totalByState <- stateVsProducer %>% group_by(TYPE_OF_PRODUCER) %>%
-  summarize(STATE) %>%
-  filter(!STATE=="US-TOTAL") ## remove Total category
-
-ggplot(data = totalByState) +
-  geom_bar(aes(y = reorder(STATE, TYPE_OF_PRODUCER, length), 
-  fill = TYPE_OF_PRODUCER))            +
-  labs(title = "TYPE_OF_PRODUCER by STATE",
-       x = "PRODUCER",
-       y = "STATE")
-
-```
-3. YEAR vs GENERATION_Megawatthours
-```{r }
-stateVsGen <- visualizationData
-##stateVsGen
-##Sum up enegry Generation by source
-totalByYear <- stateVsGen %>% group_by(YEAR) %>%
+ProdVsGen <- visualizationData
+##ProdVsGen
+##Sum up enegry Generation by producer
+totalByMonth <- ProdVsGen %>% group_by(TYPE_OF_PRODUCER) %>%
   summarize(totalProduction = sum(GENERATION_Megawatthours))
 ##totalBySource
+## create bar graph for total production
+ggplot(data = totalByMonth) +
+  geom_bar(aes(y = reorder(TYPE_OF_PRODUCER, totalProduction), x = totalProduction), stat = "identity") +
+  labs(title = "Total GENERATION_Megawatthours by PRODUCER",
+       x = "GENERATION_Megawatthours",
+       y = "Type of Producer")
+
+```
+
+2. MONTH vs GENERATION_Megawatthours
+```{r }
+MonthVsGen <- visualizationData
+##MonthVsGen
+##Sum up enegry Generation by month
+totalByMonth <- MonthVsGen %>% group_by(MONTH) %>%
+  summarize(totalProduction = sum(GENERATION_Megawatthours))
+##totalBySource
+## create bar graph for total production
+ggplot(data = totalByMonth) +
+  geom_bar(aes(y = reorder(MONTH, totalProduction), x = totalProduction), stat = "identity") +
+  labs(title = "Total GENERATION_Megawatthours by MONTH",
+       x = "GENERATION_Megawatthours",
+       y = "MONTH (Numeric)")
+       
+```
+
+3. YEAR vs GENERATION_Megawatthours
+```{r }
+YearVsGen <- visualizationData
+##YearVsGen
+##Sum up enegry Generation by year
+totalByYear <- YearVsGen %>% group_by(YEAR) %>%
+  summarize(totalProduction = sum(GENERATION_Megawatthours))
+##totalBySYear
 ## create bar graph for total production
 ggplot(data = totalByYear) +
   geom_bar(aes(y = reorder(YEAR, totalProduction), x = totalProduction), stat = "identity") +
@@ -77,13 +81,12 @@ ggplot(data = totalByYear) +
        x = "GENERATION_Megawatthours",
        y = "YEAR")
 
-
 ```
 4. STATE VS GENERATION_Megawatthours
 ```{r }
 stateVsGen <- visualizationData
 ##stateVsGen
-##Sum up enegry Generation by source
+##Sum up enegry Generation by state
 totalByState <- stateVsGen %>% group_by(STATE) %>%
   summarize(totalProduction = sum(GENERATION_Megawatthours)) %>%
   filter(!STATE=="US-TOTAL") ## remove Total category
@@ -115,18 +118,19 @@ ggplot(data = totalBySource) +
 ```
 - A brief discussion (one or two sentences) of each visualization. In your discussion, interpret the visualization and highlight any interesting patterns or relationships that the visualization reveals.
 
-1. STATE vs ENERGY_SOURCE 
-Graphing State vs Energy Source shows the type of energy source by each State. These include Coal, Geothermal, Hydroelectric Conventional, etc. 
+1. TYPE_OF_PRODUCER vs GENERATION_Megawatthours
+  Graphing the TYPE_OF_PRODUCER by GENERATION shows that electric produces the most for the country, Total Electric Power Industry being the leader. 
 
-2. STATE vs  TYPE_OF_PRODUCER
-Graphing State vs Type_OF_Producer shows the type of prdoucer by each State. These include Combined Heat and Power and/or Commercial power, 
-Electric Power, Industrial Power, etc. 
+2. MONTH vs GENERATION_Megawatthours
+  Graphing the MONTH by GENERATION shows that the months July and August produce the most amount of energy. These are the summer months and weather changes could have increased demand for energy.
 
 3. YEAR vs GENERATION_Megawatthours
-Graphing YEAR vs GENERATION shows that 2018 procduced the greatest total amount of energy for all states.
+  Graphing YEAR vs GENERATION shows that 2018 procduced the greatest total amount of energy for all states.
 
 4. STATE VS GENERATION_Megawatthours
-Graphing STATE vs GENERATION shows Texas is by far the largest energy producer in the country. FL, PA, CA and IL also produce much more energy than other states. Since there are so many states, we will likely need to focus our anaylsis on key states.
 
+  Graphing STATE vs GENERATION shows Texas is by far the largest energy producer in the country. FL, PA, CA and IL also produce much more energy than other states. Since there are so many states, we will likely need to focus our anaylsis on key states.
+  
 5. ENERGY_SOURCE vs GENERATION_Megawatthours
-Graphing the ENERGY_SOURCE by GENERATION shows that there are 5 main energy sources in the US. This will inform which energy sources we want to evelaute in the final report. Unless something interesting is occuring in those 8 categories - it probably isn't worth including in our analysis.
+
+  Graphing the ENERGY_SOURCE by GENERATION shows that there are 5 main energy sources in the US. This will inform which energy sources we want to evelaute in the final report. Unless something interesting is occuring in those 8 categories - it probably isn't worth including in our analysis.
