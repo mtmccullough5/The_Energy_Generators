@@ -38,13 +38,13 @@ stateVsSource <- visualizationData
 totalByState <- stateVsSource %>% group_by(ENERGY_SOURCE) %>%
   summarize(STATE) %>%
   filter(!STATE=="US-TOTAL") ## remove Total category
-
+  
 ggplot(data = totalByState) +
-  geom_bar(aes(y = reorder(STATE, ENERGY_SOURCE, length))) +
+  geom_bar(aes(y = reorder(STATE, ENERGY_SOURCE, length),
+  fill = ENERGY_SOURCE)) +
   labs(title = "Total ENERGY Source by STATE",
        x = "ENERGY SOURCE",
        y = "STATE")
-
 
 ```
 2. STATE vs  TYPE_OF_PRODUCER
@@ -55,11 +55,11 @@ totalByState <- stateVsProducer %>% group_by(TYPE_OF_PRODUCER) %>%
   filter(!STATE=="US-TOTAL") ## remove Total category
 
 ggplot(data = totalByState) +
-  geom_bar(aes(y = reorder(STATE, TYPE_OF_PRODUCER, length))) +
+  geom_bar(aes(y = reorder(STATE, TYPE_OF_PRODUCER, length), 
+  fill = TYPE_OF_PRODUCER))            +
   labs(title = "TYPE_OF_PRODUCER by STATE",
        x = "PRODUCER",
        y = "STATE")
-
 
 ```
 3. YEAR vs GENERATION_Megawatthours
@@ -116,7 +116,7 @@ ggplot(data = totalBySource) +
 - A brief discussion (one or two sentences) of each visualization. In your discussion, interpret the visualization and highlight any interesting patterns or relationships that the visualization reveals.
 
 1. STATE vs ENERGY_SOURCE 
-
+Graphing State vs Energy Source shows that California 
 
 2. STATE vs  TYPE_OF_PRODUCER
 
