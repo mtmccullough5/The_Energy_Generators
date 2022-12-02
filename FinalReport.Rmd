@@ -31,14 +31,14 @@ The United States uses various energy sources to create electricity. Over time, 
 
 # Introduction
 
-### Questions within the data
+### Questions within the data - Clean up when creating report
 
-- Does the cost of fuel influence the energy production rates?
-- How has the reduction in renewables cost affected generation numbers?
-- Which energy source produces the most energy?
-- What is the average yearly production of each energy source by state?
-- Which state produced the most of each energy type in the last 10 years?
-
+- Does the cost of fuel influence the energy production rates? Kevin 
+- How has the reduction in renewables cost affected generation numbers? Matt
+- Which energy source produces the most energy? Rich
+- What is the average yearly production of each energy source by state? Rich mess with this to show 
+- Which does the future of renewable energy look like? Shivani - reword how every you need to
+- When would you expect renewable energy to surpass fossil fuels? Matt
 
 
 # Data Collection and Arrangement
