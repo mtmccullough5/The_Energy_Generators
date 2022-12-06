@@ -50,7 +50,8 @@ states = read_csv("states.csv") # 51 states inclusive of DC with coal region
 og = read_csv("OilandGas.csv") # Daily oil and natural gas prices 01/2000 to 02/2022 
 uranium = read_csv("uranium.csv") # Monthly Uranium prices from 01/2000 to 11/2021
 coal = read_csv("coal.csv") # Weekly coal prices from 05/2008 to 10/2021
-
+solar = read_csv("solar_cost.csv")
+wind = read_csv("wind.csv")
 ```
 ```{r}
 # generate a whole data set
@@ -151,6 +152,14 @@ allTableWhole = energyWhole %>%
   rename(Price_coal = value) %>%
   select(-Coal_Region) %>%
   ungroup() %>%
+  mutate(Other_Gen_Total_new = 
+           Other_Gen_Total + Biomass_Gen_Total + Other_Gas_Gen_Total + 
+           Wood_Gen_Total + Petroleum_Gen_Total + Geothermal_Gen_Total +
+           Storage_Gen_Total) %>%
+  select(
+    STATE, date_col, Coal_Gen_Total, Natural_Gas_Gen_Total,
+    Hydro_Gen_Total, Wind_Gen_Total, Solar_Gen_Total, 
+    Other_Gen_Total_new) %>%
   arrange(date_col)
 
 print(allTableWhole)
@@ -170,9 +179,38 @@ At one point with only limited number of rows the original coal price csv was ea
 ## Does the cost of fuel influence the energy production rates?
 
 
-## Does the cost of fuel influence the energy production rates?
-
 ## How has the reduction in renewables cost affected generation numbers?
+```{r}
+totalUSSolarGen = allTableWhole %>%
+  select(STATE,date_col,Solar_Gen_Total) %>%
+  group_by(date_col) %>%
+  summarise(US_Solar_Gen = sum(Solar_Gen_Total))
+
+print(totalUSSolarGen)
+
+totalUSWindGen = allTableWhole %>%
+  select(STATE,date_col,Wind_Gen_Total) %>%
+  group_by(date_col) %>%
+  summarise(US_Wind_Gen = sum(Wind_Gen_Total))
+
+print(totalUSWindGen)
+
+
+
+```
+
+Plots of Wind and solar costs data with overlay of production on same plot
+
+Linear model of cost to generation
+
+Table of data fit
+
+
+
+
+
+Most of the dramatic drop in wind renewable capital costs occurred in the early 2000's. 
+
 
 ## Which energy source produces the most energy?
 
@@ -297,3 +335,10 @@ https://www.kaggle.com/datasets/timmofeyy/-metals-price-changes-within-last-30-y
 https://ourworldindata.org/grapher/coal-prices?country=~US+Central+Appalachian+coal+spot+price+index+%28BP%29 -> for Coal (may need a different set)  
 
 https://github.com/mtmccullough5/The_Energy_Generators/edit/main/README.md -> Project Repository
+
+https://www.nrel.gov/docs/fy21osti/77324.pdf
+
+https://www.eia.gov/electricity/generatorcosts/
+
+https://www.nrel.gov/docs/fy12osti/54526.pdf 
+https://apps.automeris.io/wpd/
