@@ -33,13 +33,11 @@ The United States uses various energy sources to create electricity. Over time, 
 
 ### Questions within the data - Clean up when creating report
 
-- Does the cost of fuel influence the energy production rates? Kevin 
-- How has the reduction in renewables cost affected generation numbers? Matt
 - Which energy source produces the most energy? Rich
 - What is the average yearly production of each energy source by state? Rich mess with this to show 
-- Which does the future of renewable energy look like? Shivani - reword how every you need to
-- When would you expect renewable energy to surpass fossil fuels? Matt
-
+- How have the various sources of generation changed over time? Shivani
+- Does the cost of fuel influence the energy production rates? Kevin 
+- How has the reduction in renewable cost affected generation numbers? Matt
 
 # Data Collection and Arrangement
 
@@ -125,7 +123,7 @@ coalWholeLong = coalWhole %>%
 print(coalWholeLong)
 
 # Build Table
-allTableWhole = energyWhole %>%
+allTableWholeCost = energyWhole %>%
   left_join(states, by = c("STATE"="Code")) %>%
   select(date_col, STATE, `TYPE OF PRODUCER`,`ENERGY SOURCE`, `GENERATION (Megawatthours)`,Coal_Region) %>%
   pivot_wider(names_from = `ENERGY SOURCE`, values_from = `GENERATION (Megawatthours)`) %>%
@@ -154,13 +152,17 @@ allTableWhole = energyWhole %>%
   mutate(Other_Gen_Total_new = 
            Other_Gen_Total + Biomass_Gen_Total + Other_Gas_Gen_Total + 
            Wood_Gen_Total + Petroleum_Gen_Total + Geothermal_Gen_Total +
-           Storage_Gen_Total) %>%
+           Storage_Gen_Total)
+
+print(allTableWholeCost)
+
+allTableWhole = allTableWholeCost %>%
   select(
     STATE, date_col, Coal_Gen_Total, Natural_Gas_Gen_Total,
     Hydro_Gen_Total, Wind_Gen_Total, Solar_Gen_Total, 
     Other_Gen_Total_new) %>%
   arrange(date_col)
-
+  
 print(allTableWhole)
 ```
 
@@ -174,58 +176,6 @@ At one point with only limited number of rows the original coal price csv was ea
 
 
 # Discussion
-
-## Does the cost of fuel influence the energy production rates?
-
-
-## How has the reduction in renewables cost affected generation numbers?
-```{r}
-totalUSSrenewable = allTableWhole %>%
-  select(STATE,date_col,Solar_Gen_Total, Wind_Gen_Total) %>%
-  group_by(date_col) %>%
-  summarise(
-    US_Solar_Gen = sum(Solar_Gen_Total), 
-    US_Wind_Gen = sum(Wind_Gen_Total))
-
-ggplot(data = totalUSSrenewable) +
-  geom_point(mapping = aes(x = date_col, y = US_Solar_Gen)) +
-  geom_smooth(mapping = aes(x = date_col, y = US_Solar_Gen)) +
-  geom_point(mapping = aes(x = date_col, y = US_Wind_Gen)) + 
-  geom_smooth(mapping = aes(x = date_col, y = US_Wind_Gen)) +
-  labs(title = "Total US Renewable Gen",
-       x = "",
-       y = "MWH")
-
-
-```
-
-```{r}
-
-renewableCost = read_csv("windSolarCost.csv")
-
-print(renewableCost)
-
-ggplot(renewableCost) +
-  geom_point(aes(x = year,y = kWcost, color = gen, size=2))+ 
-  labs(title = "Renewable Capital Costs",
-       x = "",
-       y = "$ per kW")+
-  scale_x_discrete(limits = c(2010, 2012, 2014, 2016, 2018, 2020))+
-  guides(size=FALSE)
-```
-
-Plots of Wind and solar costs data with overlay of production on same plot
-
-Linear model of cost to generation
-
-Table of data fit
-
-
-
-
-
-Most of the dramatic drop in wind renewable capital costs occurred in the early 2000's. 
-
 
 ## Which energy source produces the most energy?
 
@@ -324,6 +274,61 @@ MostEnergyProdbySourcebyState <- energyWholeClean %>%
   filter(TotalProduction >0) %>%
   arrange(TotalProduction)
 MostEnergyProdbySourcebyState
+
+
+
+
+
+## Does the cost of fuel influence the energy production rates?
+
+
+## How has the reduction in renewables cost affected generation numbers?
+```{r}
+totalUSSrenewable = allTableWhole %>%
+  select(STATE,date_col,Solar_Gen_Total, Wind_Gen_Total) %>%
+  group_by(date_col) %>%
+  summarise(
+    US_Solar_Gen = sum(Solar_Gen_Total), 
+    US_Wind_Gen = sum(Wind_Gen_Total))
+
+ggplot(data = totalUSSrenewable) +
+  geom_point(mapping = aes(x = date_col, y = US_Solar_Gen)) +
+  geom_smooth(mapping = aes(x = date_col, y = US_Solar_Gen)) +
+  geom_point(mapping = aes(x = date_col, y = US_Wind_Gen)) + 
+  geom_smooth(mapping = aes(x = date_col, y = US_Wind_Gen)) +
+  labs(title = "Total US Renewable Gen",
+       x = "",
+       y = "MWH")
+
+
+```
+
+```{r}
+
+renewableCost = read_csv("windSolarCost.csv")
+
+print(renewableCost)
+
+ggplot(renewableCost) +
+  geom_point(aes(x = year,y = kWcost, color = gen, size=2))+ 
+  labs(title = "Renewable Capital Costs",
+       x = "",
+       y = "$ per kW")+
+  scale_x_discrete(limits = c(2010, 2012, 2014, 2016, 2018, 2020))+
+  guides(size=FALSE)
+```
+
+Plots of Wind and solar costs data with overlay of production on same plot
+
+Linear model of cost to generation
+
+Table of data fit
+
+
+
+
+
+Most of the dramatic drop in wind renewable capital costs occurred in the early 2000's. 
 
 
 
