@@ -159,11 +159,64 @@ print(allTableWholeCost)
 allTableWhole = allTableWholeCost %>%
   select(
     STATE, date_col, Coal_Gen_Total, Natural_Gas_Gen_Total,
-    Hydro_Gen_Total, Wind_Gen_Total, Solar_Gen_Total, 
+    Hydro_Gen_Total, Wind_Gen_Total, Solar_Gen_Total, Nuclear_Gen_Total,
     Other_Gen_Total_new) %>%
   arrange(date_col)
   
 print(allTableWhole)
+
+TotalUSWholeGen = allTableWhole %>%
+  group_by(date_col) %>%
+  summarize(
+    US_Coal_Gen = sum(Coal_Gen_Total, na.rm = T), 
+    US_Natural_Gas_Gen = sum(Natural_Gas_Gen_Total, na.rm = T), 
+    US_Nuclear_Gen = sum(Nuclear_Gen_Total, na.rm = T), 
+    US_Hydro_Gen = sum(Hydro_Gen_Total, na.rm = T), 
+    US_Solar_Gen = sum(Solar_Gen_Total, na.rm = T), 
+    US_Wind_Gen = sum(Wind_Gen_Total, na.rm = T),
+    US_Other_Gen = sum(Other_Gen_Total_new, na.rm = T)) %>%
+  pivot_longer(cols = !date_col, names_to = "gen_type", values_to = "MWH") %>%
+  mutate(millionGWH = MWH/1000000000) %>%
+  select(date_col, gen_type,millionGWH)
+
+print(TotalUSWholeGen )
+
+ggplot(data = TotalUSWholeGen) +
+  geom_bar(aes(y = reorder(gen_type, millionGWH), x = millionGWH, fill = gen_type), stat = "identity") +
+  labs(title = "Total Energy Production by Energy Source",
+       x = "Energy Generation (Millions of Gigawatthours)",
+       y = "Energy Source")+
+  scale_fill_brewer(palette = "Spectral")
+
+dateStart = make_date(2009,01,01)
+dateEnd = make_date(2009,12,01)
+
+TotalUSWholeGen2009 = TotalUSWholeGen %>%
+  filter(date_col >= dateStart & date_col <= dateEnd) %>%
+  arrange(date_col)
+
+print(TotalUSWholeGen2009)
+ggplot(data = TotalUSWholeGen2009) +
+  geom_bar(aes(y = reorder(gen_type, millionGWH), x = millionGWH, fill = gen_type), stat = "identity") +
+  labs(title = "Total Energy Production by Energy Source",
+       x = "Energy Generation (Millions of Gigawatthours)",
+       y = "Energy Source") +
+  scale_fill_brewer(palette = "Spectral")
+
+dateStart = make_date(2020,01,01)
+dateEnd = make_date(2020,12,01)
+
+TotalUSWholeGen2020 = TotalUSWholeGen %>%
+  filter(date_col >= dateStart & date_col <= dateEnd) %>%
+  arrange(date_col)
+
+print(TotalUSWholeGen2020)
+ggplot(data = TotalUSWholeGen2020) +
+  geom_bar(aes(y = reorder(gen_type, millionGWH), x = millionGWH, fill = gen_type), stat = "identity") +
+  labs(title = "Total Energy Production by Energy Source",
+       x = "Energy Generation (Millions of Gigawatthours)",
+       y = "Energy Source")+
+  scale_fill_brewer(palette = "Spectral")
 ```
 
 The main data set is relatively clean, there are a few data points that probably need to be removed. For instance in the skim there is negative megawatt hour generation value in the P0 col which does not make sense. It seems the negative values are related to "Pumped Storage". This will need further investigation.
