@@ -13,7 +13,7 @@ library(tidyverse)
 library(lubridate)
 library(dplyr)
 library(usmap)
-
+library(moderndive)
 
 ```
 
@@ -165,6 +165,25 @@ allTableWhole = allTableWholeCost %>%
   arrange(date_col)
   
 print(allTableWhole)
+```
+
+The main data set is relatively clean, there are a few data points that probably need to be removed. For instance in the skim there is negative megawatt hour generation value in the P0 col which does not make sense. It seems the negative values are related to "Pumped Storage". This will need further investigation.
+
+The start of formatting the price data, sourced from various other data sources then the original energy data set. Pulling in the various csv files in their own formats and making adjustments to a common format with just the data of interest. 
+
+One of the price data sets does not have the monthly fidelity that the overall energy generation data set has, additionally price may be more dependent on region for coal plants which is not feasible to transport in many cases. There is an unresolved issue of relating the price to the generation. Either the generation will have to be summarized to the year or the yearly price data extrapolated. Another possible data set for us to consider is https://data.nasdaq.com/data/EIA/COAL-us-coal-prices-by-region but will require come way to connect the location in the main file to the region in that potential dataset.
+
+At one point with only limited number of rows the original coal price csv was easier to edit by removing the other regions(non-us) than through R parsing.  
+
+
+# Discussion
+
+## Which energy source produces the most energy?
+
+If you look at it simply by total amount generated is clear the number one energy source from 2008-2021 in the entire United States is Coal followed Natural Gas and Nuclear.  Then the other types of energy sources drops of drastically. Note that the data shown in this bar graph is in the millions of Gigawatt hours because of the massive amounts of energy produce over the time period.
+
+
+```{r}
 
 TotalUSWholeGen = allTableWhole %>%
   group_by(date_col) %>%
@@ -178,7 +197,7 @@ TotalUSWholeGen = allTableWhole %>%
     US_Other_Gen = sum(Other_Gen_Total_new, na.rm = T)) %>%
   pivot_longer(cols = !date_col, names_to = "gen_type", values_to = "MWH") %>%
   mutate(millionGWH = MWH/1000000000) %>%
-  select(date_col, gen_type,millionGWH)
+  select(date_col, gen_type, millionGWH)
 
 print(TotalUSWholeGen )
 
@@ -218,61 +237,27 @@ ggplot(data = TotalUSWholeGen2020) +
        x = "Energy Generation (Millions of Gigawatthours)",
        y = "Energy Source")+
   scale_fill_brewer(palette = "Spectral")
-```
-
-The main data set is relatively clean, there are a few data points that probably need to be removed. For instance in the skim there is negative megawatt hour generation value in the P0 col which does not make sense. It seems the negative values are related to "Pumped Storage". This will need further investigation.
-
-The start of formatting the price data, sourced from various other data sources then the original energy data set. Pulling in the various csv files in their own formats and making adjustments to a common format with just the data of interest. 
-
-One of the price data sets does not have the monthly fidelity that the overall energy generation data set has, additionally price may be more dependent on region for coal plants which is not feasible to transport in many cases. There is an unresolved issue of relating the price to the generation. Either the generation will have to be summarized to the year or the yearly price data extrapolated. Another possible data set for us to consider is https://data.nasdaq.com/data/EIA/COAL-us-coal-prices-by-region but will require come way to connect the location in the main file to the region in that potential dataset.
-
-At one point with only limited number of rows the original coal price csv was easier to edit by removing the other regions(non-us) than through R parsing.  
 
 
-# Discussion
 
-## Which energy source produces the most energy?
-
-If you look at it simply by total amount generated is clear the number one energy source from 2008-2021 in the entire United States is Coal followed Natural Gas and Nuclear.  Then the other types of energy sources drops of drastically. Note that the data shown in this bar graph is in the millions of Gigawatt hours because of the massive amounts of energy produce over the time period.
-
-
-```{r}
-##Start with bar chart showing overall energy production
-##clean up column names
-energyWholeClean <- energyWhole
-names(energyWholeClean)[names(energyWholeClean) == 'ENERGY SOURCE'] <- 'EnergySource'
-names(energyWholeClean)[names(energyWholeClean) == 'GENERATION (Megawatthours)'] <- 'Generation'
-energyWholeClean <- energyWholeClean %>%
-  mutate(GenerationMilGig = Generation/1000000000) %>%
-  mutate(GenerationGig = Generation/1000000)
-##energyWholeClean
-##Sum up enegry Generation by source in millions of Gig
-totalBySourceGig <- energyWholeClean %>% group_by(EnergySource) %>%
-  summarize(totalProductionGig = sum(GenerationMilGig), totalProduction = sum(Generation)) %>%
-  filter(!EnergySource=="Total") ## remove Total category
-##totalBySourceGig
-##Sum up enegry Generation by source in gigawatt 
-totalBySource <- energyWholeClean %>% group_by(EnergySource,STATE, YEAR) %>%
-  summarize(totalProduction = sum(GenerationGig)) %>%
-  filter(!EnergySource=="Total") ## remove Total category
-##totalBySource
-## create bar graph for total production
-ggplot(data = totalBySourceGig) +
-  geom_bar(aes(y = reorder(EnergySource, totalProductionGig), x = totalProductionGig), stat = "identity") +
-  labs(title = "Total Energy Production by Energy Source",
-       x = "Energy Generation (Millions of Gigawatthours)",
-       y = "Energy Source")
 ```
 
 Looking at the data simply by total doesn't tell the whole story though. When we look at using a line graph, we find drastic changes in a few of the energy sources.  Clearly there is a shift to move away from using coal as an energy source with the total production almost cuts in half since 2008. The exact opposite can be said for Natural Gas with energy production nearly doubling.  Clearly the country is making efforts to protect the environment by moving from Coal to Natural Gas for its energy.  It is also worth noting that Nuclear energy production has remained level over the entire time period. There are reasons preventing the US from moving to more nuclear production.  The only other real item on note is the gradual increase in production of Wind energy.  Yet more evidence the US is looking to increase cleaner energy.
 
 ```{r}
+
+##totalBySourceGig
+##Sum up enegry Generation by source in gigawatt 
+totalBySource <- TotalUSWholeGen %>% 
+  mutate(year = year(date_col))
+
 ##show data by year 
 ggplot(data = totalBySource) +
-  geom_bar(aes(y = totalProduction,x = YEAR, group = EnergySource, color = EnergySource, linetype = EnergySource), stat = "identity") +
+  geom_bar(aes(y = millionGWH, x = year, group = gen_type, fill=gen_type), stat = "identity") +
   labs(title = "Total Energy Production by Energy Source",
        y = "Energy Generation (Gigawatthours)",
-       x = "Year")
+       x = "Year")+
+  scale_fill_brewer(palette = "Spectral")
 ```
 
 
@@ -295,7 +280,7 @@ avgProdbySourcebyState
 write.csv(avgProdbySourcebyState, "avgProdbySourcebyState.csv", row.names=FALSE)
 
 
-mapview(avgProdbySourcebyState, zcol='avgGigHours')
+#mapview(avgProdbySourcebyState, zcol='avgGigHours')
 
 ##get list of unique states
 ##variables <- avgProdbySourcebyState %>%
@@ -421,33 +406,9 @@ totalCoalCostsModel <- lm(Coal_Gen_Total ~ Price_natural_gas_m + Price_uran + Pr
 get_regression_table(totalCoalCostsModel)
 
 ```
+
+
 ## How has the reduction in renewables cost affected generation numbers?
-```{r}
-totalUSSrenewable = allTableWhole %>%
-  select(STATE,date_col,Solar_Gen_Total, Wind_Gen_Total) %>%
-  group_by(date_col) %>%
-  summarise(
-    US_Solar_Gen = sum(Solar_Gen_Total), 
-    US_Wind_Gen = sum(Wind_Gen_Total))
-
-ggplot(data = totalUSSrenewable) +
-  geom_point(mapping = aes(x = date_col, y = US_Solar_Gen)) +
-  geom_smooth(mapping = aes(x = date_col, y = US_Solar_Gen)) +
-  geom_point(mapping = aes(x = date_col, y = US_Wind_Gen)) + 
-  geom_smooth(mapping = aes(x = date_col, y = US_Wind_Gen)) +
-  labs(title = "Total US Renewable Gen",
-       x = "",
-       y = "MWH")
-
-
-```
-
-```{r}
-
-
-
-```
-
 
 
 ```{r}
