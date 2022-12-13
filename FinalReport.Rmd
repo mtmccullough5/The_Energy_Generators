@@ -14,12 +14,15 @@ library(lubridate)
 library(dplyr)
 library(usmap)
 library(moderndive)
-
+library(gifski)
+library(readr)
+library(png)
+library(magick)
 ```
 
 # Group Members
 
-- Richard Abegg
+- Rich Abegg
 - Matthew McCullough
 - Shivani Sharma
 - Kevin Tam
@@ -262,42 +265,57 @@ ggplot(data = totalBySource) +
 
 
 ## What is the average yearly production of each energy source by state?
-
-##STILL WORKING on this section
 ```{r}
-library(mapview)
-library(sf)
-library(rlang)
+dir_out <- file.path(tempdir(), "plots")
+dir.create(dir_out, recursive = TRUE)
 
-## create tibble for to get data for 5 key energy sources
-avgProdbySourcebyState <- energyWholeClean %>%
-##  filter(YEAR=='2008', !EnergySource=='Total', !STATE=='US-TOTAL') %>%  
-  filter(EnergySource=='Coal' | EnergySource=='Natural Gas'| EnergySource=='Nuclear'| EnergySource=='Hydroelectric Conventional'| EnergySource=='Wind', !STATE=='US-TOTAL') %>%
-  group_by(EnergySource,STATE, YEAR) %>%
-  summarise(avgGigHours = mean(GenerationGig))%>%
-  filter(avgGigHours >0)
+avgProdbySourcebyState <- energyWhole %>%
+  group_by(`ENERGY SOURCE`,STATE, YEAR) %>%
+  summarise(avgMegaHours = mean(`GENERATION (Megawatthours)`)) %>%
+  rename(state = STATE) %>%
+  filter(state != "US-TOTAL")
 avgProdbySourcebyState
-write.csv(avgProdbySourcebyState, "avgProdbySourcebyState.csv", row.names=FALSE)
+
+energyList <- list("Coal", "Natural Gas", "Nuclear", "Hydroelectric Conventional", "Wind", "Solar Thermal and Photovoltaic")
+yearList <- list("2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020")
+
+for(energy in energyList) {
+  print(energy)
+    avgProdEner <- avgProdbySourcebyState %>% filter(`ENERGY SOURCE` == energy)
+    minVal = min(avgProdEner[["avgMegaHours"]]) 
+    maxVal = max(avgProdEner[["avgMegaHours"]])
+  for(year in yearList) {
+    print(year)
+    chartTitle <- paste(energy, year)
+    avgProd <- avgProdbySourcebyState %>% filter(`ENERGY SOURCE` == energy) %>% filter(YEAR == year)
+    p <- plot_usmap(data = avgProd, values = "avgMegaHours", regions = 'states') + 
+      labs(title = chartTitle) + 
+      scale_fill_continuous(low = "white", high ="darkgreen", 
+                          name = "Average Megawatt Hours",label = scales::comma,
+                          limits = c(minVal,maxVal)) + 
+      theme(legend.position = "right") +
+      theme(panel.background = element_rect(color = "black", fill = "lightblue"))
+    fp <- file.path(dir_out, paste0(year, ".png"))
+    ggsave(plot = p, 
+         filename = fp, 
+         device = "png")
+  }
+## list file names and read in
+imgs <- list.files(dir_out, full.names = TRUE)
+img_list <- lapply(imgs, image_read)
+img_joined <- image_join(img_list)
+
+## animate at 2 frames per second
+img_animated <- image_animate(img_joined, fps = 2)
+gifname <- paste(energy,".gif")
+image_write(image = img_animated,
+            path = gifname)
+  file.remove(dir_out,"*.png")
+}
 
 
-#mapview(avgProdbySourcebyState, zcol='avgGigHours')
 
-##get list of unique states
-##variables <- avgProdbySourcebyState %>%
-## group_by(STATE) %>%
-##  distinct(STATE)
-##for each var (STATE) create a line chart showing avg Production by year
-##for (var in variables) {
-##print(var)
-##get data for the STATE being looped on
-##stateAvgProd <-  avgProdbySourcebyState %>%
-##  filter(STATE=='!!sym(var)')
-##Create a chart for state showing average production by energy source
-##plot <- ggplot(data = stateAvgProd, aes(x = YEAR, y = avgGigHours, group = EnergySource, color = EnergySource), stat = "identity") +
-##    geom_line() +
-##    geom_point()
-##print(plot)
-##}
+
 ```
 
 ## Which state produced the most of each energy type in the last 10 years?
