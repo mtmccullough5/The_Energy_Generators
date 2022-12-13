@@ -48,6 +48,7 @@ states = read_csv("states.csv") # 51 states inclusive of DC with coal region
 og = read_csv("OilandGas.csv") # Daily oil and natural gas prices 01/2000 to 02/2022 
 uranium = read_csv("uranium.csv") # Monthly Uranium prices from 01/2000 to 11/2021
 coal = read_csv("coal.csv") # Weekly coal prices from 05/2008 to 10/2021
+renewableCost = read_csv("windSolarCost.csv")
 
 ```
 ```{r}
@@ -358,17 +359,8 @@ ggplot(data = totalUSSrenewable) +
 
 ```{r}
 
-renewableCost = read_csv("windSolarCost.csv")
 
-print(renewableCost)
 
-ggplot(renewableCost) +
-  geom_point(aes(x = year,y = kWcost, color = gen, size=2))+ 
-  labs(title = "Renewable Capital Costs",
-       x = "",
-       y = "$ per kW")+
-  scale_x_discrete(limits = c(2010, 2012, 2014, 2016, 2018, 2020))+
-  guides(size=FALSE)
 ```
 
 
@@ -387,7 +379,8 @@ solarRenew = allTableWhole %>%
   summarise( 
     US_Solar_Gen = sum(Solar_Gen_Total)) %>%
   left_join(solarCost) %>%
-  select(date_col,US_Solar_Gen,kWcost) %>%
+  mutate(GWH = US_Solar_Gen/1000) %>%
+  select(date_col,GWH,kWcost) %>%
   pivot_longer(cols = !date_col, names_to = "facet_vars", values_to = "solarValues")
 
 print(solarRenew)
@@ -395,16 +388,49 @@ print(solarRenew)
 
 ggplot(data = solarRenew) +
   geom_point(mapping = aes(x = date_col, y = solarValues)) + 
+  geom_smooth(mapping = aes(x = date_col, y = solarValues)) +
   theme_light()+
-  facet_grid(rows = vars(facet_vars),scales = "free_y")
+  facet_grid(rows = vars(facet_vars),scales = "free_y") +
+  labs(
+    title = "Solar Generation and Capital Costs",
+    x = "",
+    y = ""
+  )
   
 ```
 
-Plots of Wind and solar costs data with overlay of production on same plot
+```{r}
+windCost = renewableCost %>%
+  filter(gen == "w") %>%
+  mutate(date_col = make_date(year=year,month=01,day=01)) %>%
+  select(date_col, kWcost)
+  
+print(windCost)
 
-Linear model of cost to generation
+windRenew = allTableWhole %>%
+  select(STATE,date_col,Wind_Gen_Total) %>%
+  group_by(date_col) %>%
+  summarise( 
+    US_Wind_Gen = sum(Wind_Gen_Total)) %>%
+  left_join(windCost) %>%
+  mutate(GWH = US_Wind_Gen/1000) %>%
+  select(date_col,GWH,kWcost) %>%
+  pivot_longer(cols = !date_col, names_to = "facet_vars", values_to = "windValues")
 
-Table of data fit
+print(windRenew)
+
+
+ggplot(data = windRenew) +
+  geom_point(mapping = aes(x = date_col, y = windValues)) + 
+  geom_smooth(mapping = aes(x = date_col, y = windValues)) +
+  theme_light()+
+  facet_grid(rows = vars(facet_vars),scales = "free_y") +
+  labs(
+    title = "Wind Generation and Capital Costs",
+    x = "",
+    y = ""
+  )
+```
 
 
 
