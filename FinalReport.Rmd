@@ -198,7 +198,7 @@ TotalUSWholeGen2009 = TotalUSWholeGen %>%
 print(TotalUSWholeGen2009)
 ggplot(data = TotalUSWholeGen2009) +
   geom_bar(aes(y = reorder(gen_type, millionGWH), x = millionGWH, fill = gen_type), stat = "identity") +
-  labs(title = "Total Energy Production by Energy Source",
+  labs(title = "Total Energy Production in 2009 by Energy Source",
        x = "Energy Generation (Millions of Gigawatthours)",
        y = "Energy Source") +
   scale_fill_brewer(palette = "Spectral")
@@ -213,7 +213,7 @@ TotalUSWholeGen2020 = TotalUSWholeGen %>%
 print(TotalUSWholeGen2020)
 ggplot(data = TotalUSWholeGen2020) +
   geom_bar(aes(y = reorder(gen_type, millionGWH), x = millionGWH, fill = gen_type), stat = "identity") +
-  labs(title = "Total Energy Production by Energy Source",
+  labs(title = "Total Energy Production in 2020 by Energy Source",
        x = "Energy Generation (Millions of Gigawatthours)",
        y = "Energy Source")+
   scale_fill_brewer(palette = "Spectral")
@@ -369,6 +369,35 @@ ggplot(renewableCost) +
        y = "$ per kW")+
   scale_x_discrete(limits = c(2010, 2012, 2014, 2016, 2018, 2020))+
   guides(size=FALSE)
+```
+
+
+
+```{r}
+solarCost = renewableCost %>%
+  filter(gen == "s") %>%
+  mutate(date_col = make_date(year=year,month=01,day=01)) %>%
+  select(date_col, kWcost)
+  
+print(solarCost)
+
+solarRenew = allTableWhole %>%
+  select(STATE,date_col,Solar_Gen_Total) %>%
+  group_by(date_col) %>%
+  summarise( 
+    US_Solar_Gen = sum(Solar_Gen_Total)) %>%
+  left_join(solarCost) %>%
+  select(date_col,US_Solar_Gen,kWcost) %>%
+  pivot_longer(cols = !date_col, names_to = "facet_vars", values_to = "solarValues")
+
+print(solarRenew)
+
+
+ggplot(data = solarRenew) +
+  geom_point(mapping = aes(x = date_col, y = solarValues)) + 
+  theme_light()+
+  facet_grid(rows = vars(facet_vars),scales = "free_y")
+  
 ```
 
 Plots of Wind and solar costs data with overlay of production on same plot
