@@ -333,8 +333,93 @@ MostEnergyProdbySourcebyState
 
 
 ## Does the cost of fuel influence the energy production rates?
+```{r}
+#total gas generation vs cost
+totalGasCosts = allTableWholeCost %>%
+  select(STATE,date_col,Natural_Gas_Gen_Total, Price_natural_gas_m) %>%
+  group_by(date_col) %>%
+  summarise(
+    US_Gas_Gen = sum(Natural_Gas_Gen_Total), 
+    US_Gas_Price = mean(Price_natural_gas_m, na.rm = T))
+ggplot(data = totalGasCosts) +
+  geom_point(mapping = aes(x = date_col, y = US_Gas_Gen, color = US_Gas_Price )) +
+  geom_smooth(mapping = aes(x = date_col, y = US_Gas_Gen)) +
+  geom_point(mapping = aes(x = date_col, y = US_Gas_Price)) + 
+  geom_smooth(mapping = aes(x = date_col, y = US_Gas_Price)) +
+  labs(title = "Total US Natural Gas Gen vs Cost",
+       x = "Year",
+       y = "Generation (MWH)")
+
+#total nuclear generation vs cost
+totalUranCosts = allTableWholeCost %>%
+  select(STATE,date_col,Nuclear_Gen_Total, Price_uran) %>%
+  group_by(date_col) %>%
+  summarise(
+    US_Uran_Gen = sum(Nuclear_Gen_Total), 
+    US_Uran_Price = mean(Price_uran, na.rm = T))
+ggplot(data = totalUranCosts) +
+  geom_point(mapping = aes(x = date_col, y = US_Uran_Gen, color = US_Uran_Price )) +
+  geom_smooth(mapping = aes(x = date_col, y = US_Uran_Gen)) +
+  geom_point(mapping = aes(x = date_col, y = US_Uran_Price)) + 
+  geom_smooth(mapping = aes(x = date_col, y = US_Uran_Price)) +
+  labs(title = "Total US Uranium Gen vs Cost",
+       x = "Year",
+       y = "Generation (MWH)")
+
+#total coal generation vs cost
+totalCoalCosts = allTableWholeCost %>%
+  select(STATE,date_col,Coal_Gen_Total, Price_coal) %>%
+  group_by(date_col) %>%
+  summarise(
+    US_Coal_Gen = sum(Coal_Gen_Total), 
+    US_Coal_Price = mean(Price_coal, na.rm = T))
+ggplot(data = totalCoalCosts) +
+  geom_point(mapping = aes(x = date_col, y = US_Coal_Gen, color = US_Coal_Price )) +
+  geom_smooth(mapping = aes(x = date_col, y = US_Coal_Gen)) +
+  geom_point(mapping = aes(x = date_col, y = US_Coal_Price)) + 
+  geom_smooth(mapping = aes(x = date_col, y = US_Coal_Price)) +
+  labs(title = "Total US Coal Gen vs Cost",
+       x = "Year",
+       y = "Generation (MWH)") +
+
+#faceting the plots
+#NEEDS WORK
+  
+facet_grid(~US_Coal_Price)
 
 
+#models to predict generation by cost
+#natural gas model
+naturalGasModel <- lm(US_Gas_Gen ~ US_Gas_Price, data = totalGasCosts)
+
+get_regression_table(naturalGasModel)
+
+#nuclear model
+UranModel <- lm(US_Uran_Gen ~ US_Uran_Price, data = totalUranCosts)
+
+get_regression_table(UranModel)
+
+#coal model
+CoalModel <- lm(US_Coal_Gen ~ US_Coal_Price, data = totalCoalCosts)
+
+get_regression_table(CoalModel)
+
+#total gas generation func of all prices
+totalGasCostsModel <- lm(Natural_Gas_Gen_Total ~ Price_natural_gas_m + Price_uran + Price_coal, data = allTableWholeCost)
+
+get_regression_table(totalGasCostsModel)
+
+#total nuclear generation func of all prices
+totalUranCostsModel <- lm(Nuclear_Gen_Total ~ Price_natural_gas_m + Price_uran + Price_coal, data = allTableWholeCost)
+
+get_regression_table(totalUranCostsModel)
+
+#total coal generation func of all prices
+totalCoalCostsModel <- lm(Coal_Gen_Total ~ Price_natural_gas_m + Price_uran + Price_coal, data = allTableWholeCost)
+
+get_regression_table(totalCoalCostsModel)
+
+```
 ## How has the reduction in renewables cost affected generation numbers?
 ```{r}
 totalUSSrenewable = allTableWhole %>%
