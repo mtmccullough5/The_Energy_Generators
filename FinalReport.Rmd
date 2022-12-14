@@ -18,6 +18,9 @@ library(gifski)
 library(readr)
 library(png)
 library(magick)
+library(ggplot2)
+library(ggpubr)
+theme_set(theme_pubr())
 ```
 
 # Group Members
@@ -345,7 +348,7 @@ totalGasCosts = allTableWholeCost %>%
   summarise(
     US_Gas_Gen = sum(Natural_Gas_Gen_Total), 
     US_Gas_Price = mean(Price_natural_gas_m, na.rm = T))
-ggplot(data = totalGasCosts) +
+gasplot <- ggplot(data = totalGasCosts) +
   geom_point(mapping = aes(x = date_col, y = US_Gas_Gen, color = US_Gas_Price )) +
   geom_smooth(mapping = aes(x = date_col, y = US_Gas_Gen)) +
   geom_point(mapping = aes(x = date_col, y = US_Gas_Price)) + 
@@ -361,7 +364,7 @@ totalUranCosts = allTableWholeCost %>%
   summarise(
     US_Uran_Gen = sum(Nuclear_Gen_Total), 
     US_Uran_Price = mean(Price_uran, na.rm = T))
-ggplot(data = totalUranCosts) +
+uranplot <- ggplot(data = totalUranCosts) +
   geom_point(mapping = aes(x = date_col, y = US_Uran_Gen, color = US_Uran_Price )) +
   geom_smooth(mapping = aes(x = date_col, y = US_Uran_Gen)) +
   geom_point(mapping = aes(x = date_col, y = US_Uran_Price)) + 
@@ -377,19 +380,23 @@ totalCoalCosts = allTableWholeCost %>%
   summarise(
     US_Coal_Gen = sum(Coal_Gen_Total), 
     US_Coal_Price = mean(Price_coal, na.rm = T))
-ggplot(data = totalCoalCosts) +
+coalplot <- ggplot(data = totalCoalCosts) +
   geom_point(mapping = aes(x = date_col, y = US_Coal_Gen, color = US_Coal_Price )) +
   geom_smooth(mapping = aes(x = date_col, y = US_Coal_Gen)) +
   geom_point(mapping = aes(x = date_col, y = US_Coal_Price)) + 
   geom_smooth(mapping = aes(x = date_col, y = US_Coal_Price)) +
   labs(title = "Total US Coal Gen vs Cost",
        x = "Year",
-       y = "Generation (MWH)") +
+       y = "Generation (MWH)") 
+
+figure <- ggarrange(gasplot, uranplot, coalplot,
+                    ncol = 1, nrow = 3)
+figure
 
 #faceting the plots
 #NEEDS WORK
   
-facet_grid(~US_Coal_Price)
+#facet_grid(~US_Coal_Price)
 
 
 #models to predict generation by cost
