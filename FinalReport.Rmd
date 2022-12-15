@@ -254,7 +254,11 @@ Looking at the data simply by total doesn't tell the whole story though. When we
 
 ##totalBySourceGig
 ##Sum up enegry Generation by source in gigawatt 
+dateStart = make_date(2009,01,01)
+dateEnd = make_date(2020,12,01)
+
 totalBySource <- TotalUSWholeGen %>% 
+  filter(date_col >= dateStart & date_col <= dateEnd) %>%
   mutate(year = year(date_col))
 
 ##show data by year 
@@ -457,7 +461,6 @@ solarCost = renewableCost %>%
   select(date_col, kWcost)
   
 print(solarCost)
-
 solarRenew = allTableWhole %>%
   select(STATE,date_col,Solar_Gen_Total) %>%
   group_by(date_col) %>%
@@ -467,10 +470,7 @@ solarRenew = allTableWhole %>%
   mutate(GWH = US_Solar_Gen/1000) %>%
   select(date_col,GWH,kWcost) %>%
   pivot_longer(cols = !date_col, names_to = "facet_vars", values_to = "solarValues")
-
 print(solarRenew)
-
-
 ggplot(data = solarRenew) +
   geom_point(mapping = aes(x = date_col, y = solarValues)) + 
   geom_smooth(mapping = aes(x = date_col, y = solarValues)) +
@@ -482,6 +482,59 @@ ggplot(data = solarRenew) +
     y = ""
   )
   
+```
+
+
+```{r}
+
+dateStart = make_date(2009,01,01)
+dateEnd = make_date(2020,12,01)
+
+solarGen1 = allTableWhole %>%
+  select(STATE,date_col,Solar_Gen_Total) %>%
+  group_by(date_col) %>%
+  summarise(US_Solar_Gen = sum(Solar_Gen_Total))  %>%
+  mutate(GWH = US_Solar_Gen/1000) %>%
+  filter(date_col >= dateStart & date_col <= dateEnd) %>%
+  mutate(dmonth = month(date_col)+(year(date_col)-2008)*12-12) %>%
+  mutate(season_wt = dmonth*cos(2*pi*dmonth/12)) %>%
+  mutate(GWH2 = sqrt(GWH)) %>%
+  select(dmonth, GWH, GWH2, season_wt)
+print(solarGen1)
+
+solarModel = lm(GWH2 ~ dmonth + season_wt, data = solarGen1)
+summary(solarModel)
+get_regression_table(solarModel)
+points = get_regression_points(solarModel)
+print(points)
+
+points = points %>%
+  select(dmonth,GWH2,GWH2_hat)%>%
+  mutate(Source_GWH = GWH2*GWH2, Model_GWH = GWH2_hat*GWH2_hat) %>%
+  select(dmonth,Source_GWH,Model_GWH) %>%
+  pivot_longer(!dmonth, names_to="Data",values_to="GWH")
+
+futureMonths = tibble(dmonth = 145:200) %>%
+  mutate(season_wt = dmonth*cos(2*pi*dmonth/12)) 
+
+futureGWH = futureMonths %>%
+  mutate(newGWH2 = predict(solarModel,newdata = futureMonths)) %>%
+  mutate(Future_GWH = newGWH2*newGWH2) %>%
+  select(dmonth,Future_GWH) %>%
+  pivot_longer(!dmonth, names_to="Data",values_to="GWH") %>%
+  union_all(points)
+
+
+print(futureGWH)
+
+
+ggplot(data = futureGWH, aes(x=dmonth, y=GWH, color=Data))+
+  geom_line()
+
+%>%
+  mutate(
+    year1 = floor((dmonth+11)/12)+2008,
+    month1 = )
 ```
 
 ```{r}
