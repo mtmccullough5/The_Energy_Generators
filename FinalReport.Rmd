@@ -56,6 +56,12 @@ uranium = read_csv("uranium.csv") # Monthly Uranium prices from 01/2000 to 11/20
 coal = read_csv("coal.csv") # Weekly coal prices from 05/2008 to 10/2021
 renewableCost = read_csv("windSolarCost.csv")
 
+# Energy Gen is in trillion kWh per year or 
+# 1,000,000,000,000 kWh or 
+# 1,000,000,000 MWH or 
+# 1,000,000 GWH 
+# 2021 total should be 4.11 million GWH
+
 ```
 ```{r}
 # generate a whole data set
@@ -202,7 +208,7 @@ TotalUSWholeGen = allTableWhole %>%
     US_Wind_Gen = sum(Wind_Gen_Total, na.rm = T),
     US_Other_Gen = sum(Other_Gen_Total_new, na.rm = T)) %>%
   pivot_longer(cols = !date_col, names_to = "gen_type", values_to = "MWH") %>%
-  mutate(millionGWH = MWH/1000000000) %>%
+  mutate(millionGWH = MWH/1000000000) %>% # 1000 from MWH to GWH and 1,000,000 from GWH to million GWH
   select(date_col, gen_type, millionGWH)
 
 print(TotalUSWholeGen )
@@ -265,7 +271,7 @@ totalBySource <- TotalUSWholeGen %>%
 ggplot(data = totalBySource) +
   geom_bar(aes(y = millionGWH, x = year, group = gen_type, fill=gen_type), stat = "identity") +
   labs(title = "Total Energy Production by Energy Source",
-       y = "Energy Generation (Gigawatthours)",
+       y = "Energy Generation (Millions of Gigawatthours)",
        x = "Year")+
   scale_fill_brewer(palette = "Spectral")
 ```
