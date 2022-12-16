@@ -364,12 +364,12 @@ totalGasCosts = allTableWholeCost %>%
   pivot_longer(cols = !date_col, names_to = "facet_vars", values_to = "gasValues")
 
 gasplot <- ggplot(data = totalGasCosts, mapping = aes(x = date_col, y = gasValues)) +
-  geom_point() +
-  geom_smooth() +
+  geom_point(color = "blue") +
+  geom_smooth(color = "red")+
   theme_light()+
   facet_grid(rows = vars(facet_vars),scales = "free_y") +
   labs(title = "Total US Natural Gas Generation vs Cost",
-       x = "",
+       x = "Year",
        y = "")
 
 (gasplot)
@@ -386,12 +386,12 @@ totalUranCosts = allTableWholeCost %>%
   pivot_longer(cols = !date_col, names_to = "facet_vars", values_to = "nucValues")
 
 uranplot <- ggplot(data = totalUranCosts, mapping = aes(x = date_col, y = nucValues)) +
-  geom_point() +
-  geom_smooth() +
+  geom_point(color = "blue") +
+  geom_smooth(color = "red")+
   theme_light()+
   facet_grid(rows = vars(facet_vars),scales = "free_y") +
   labs(title = "Total US Uranium Generation vs Cost",
-       x = "",
+       x = "Year",
        y = "")
 
 (uranplot)
@@ -408,13 +408,13 @@ totalCoalCosts = allTableWholeCost %>%
   pivot_longer(cols = !date_col, names_to = "facet_vars", values_to = "coalValues")
 
 coalplot <- ggplot(data = totalCoalCosts, mapping = aes(x = date_col, y = coalValues)) +
-  geom_point() +
-  geom_smooth()  +
+  geom_point(color = "blue") +
+  geom_smooth(color = "red")+
   theme_light()+
   facet_grid(rows = vars(facet_vars),scales = "free_y") +
   labs(title = "Total US Coal Generation vs Cost",
-       x = "",
-       y = "") 
+       x = "Year",
+       y = "")
 
 (coalplot)
 
@@ -494,14 +494,15 @@ solarRenew = allTableWhole %>%
   select(date_col,GWH,kWcost) %>%
   pivot_longer(cols = !date_col, names_to = "facet_vars", values_to = "solarValues")
 print(solarRenew)
+
 ggplot(data = solarRenew) +
-  geom_point(mapping = aes(x = date_col, y = solarValues)) + 
-  geom_smooth(mapping = aes(x = date_col, y = solarValues)) +
+  geom_point(mapping = aes(x = date_col, y = solarValues), color = "blue") + 
+  geom_smooth(mapping = aes(x = date_col, y = solarValues), color = "red") +
   theme_light()+
   facet_grid(rows = vars(facet_vars),scales = "free_y") +
   labs(
-    title = "Solar Generation and Capital Costs",
-    x = "",
+    title = "Total US Solar Generation vs Cost",
+    x = "Year",
     y = ""
   )
   
@@ -585,13 +586,13 @@ print(windRenew)
 
 
 ggplot(data = windRenew) +
-  geom_point(mapping = aes(x = date_col, y = windValues)) + 
-  geom_smooth(mapping = aes(x = date_col, y = windValues)) +
+  geom_point(mapping = aes(x = date_col, y = windValues), color = "blue") + 
+  geom_smooth(mapping = aes(x = date_col, y = windValues), color = "red") +
   theme_light()+
   facet_grid(rows = vars(facet_vars),scales = "free_y") +
   labs(
-    title = "Wind Generation and Capital Costs",
-    x = "",
+    title = "Total US Wind Generation vs Cost",
+    x = "Year",
     y = ""
   )
 ```
